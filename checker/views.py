@@ -284,11 +284,7 @@ def send_qr_code_mail(request, attender_id):
             from_email=settings.EMAIL_HOST_USER,
             to=[attender.email],
         )
-
-        # download locale della mail per debug
-        with open("email.html", "w") as f:
-            f.write(html_content)
-        
+                
         # Invia la mail
         email.send()
 
