@@ -279,7 +279,7 @@ def send_qr_code_mail(request, attender_id):
         email = EmailMultiAlternatives(
             subject="Il tuo codice QR per l'evento",
             body=text_content,
-            from_email="Organizzazione eventi",
+            from_email="Organización de eventos",
             to=[attender.email],
         )
 

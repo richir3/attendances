@@ -12,8 +12,9 @@
         <nav>
             {% if user.is_authenticated %}
                 <div>
-                    <button id="logout">Logout</button>
-                    <button id="home">Home</button>
+                    {% load static %}
+                    <button id="logout"><img src="{% static "images/logout.png" %}"></button>
+                    <button id="home"><img src="{% static "images/home.png" %}"></button>
                 </div>
                 <div>Welcome, {{ user.username }}!</div>
             {% endif %}
