@@ -284,8 +284,9 @@ def send_qr_code_mail(request, attender_id):
             from_email=settings.EMAIL_HOST_USER,
             to=[attender.email],
         )
-                
+
         # Invia la mail
+        email.attach_alternative(html_content, "text/html")
         email.send()
 
         return JsonResponse({"status": "success", "message": "Email sent"})
