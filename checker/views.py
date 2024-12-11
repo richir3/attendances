@@ -265,7 +265,7 @@ def send_qr_code_mail(request, attender_id):
         qr_code_url = f"data:image/png;base64,{ContentFile(qr_image).read()}"
         
         # Render del template
-        html_content = render_to_string("email/qr_email.html", {"attender": attender, "qr_code_url": qr_code_url})
+        html_content = render_to_string("email/qr_email.html", {"attender": attender, "qr_code_url": qr_image})
         text_content = strip_tags(html_content)  # Versione plain text
         
         # Configura la mail
