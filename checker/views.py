@@ -279,12 +279,12 @@ def send_qr_code_mail(request, attender_id):
         email = EmailMultiAlternatives(
             subject="Il tuo codice QR per l'evento",
             body=text_content,
-            from_email=settings.EMAIL_HOST_USER,
+            from_email="Organizzazione eventi",
             to=[attender.email],
         )
 
         email.attach_alternative(html_content, "text/html")
-        email.attach("qr_code.png", buffer.getvalue(), "image/png")
+        email.attach(f"codigo qr {attender.name} {attender.surname}.png", buffer.getvalue(), "image/png")
         email.send()
 
         return JsonResponse({"status": "success", "message": "Email sent"})
