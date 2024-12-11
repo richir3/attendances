@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-w$5-3a1%v4ou!2^*owkv03-2980#iq&u-2jyx#cz&m%!vgf%km
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['rrossierba.pythonanywhere.com', '127.0.0.1', '10.100.100.139', '.vercel.app']
+ALLOWED_HOSTS = ['localhost', '.vercel.app']
 
 
 # Application definition
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'checker',
     'django_email_verification',
+    'whitenoise.runserver_nostatic',
 ]
 
 MIDDLEWARE = [
@@ -50,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'presence.urls'
