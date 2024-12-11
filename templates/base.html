@@ -44,6 +44,7 @@
             }
             return cookieValue;
         }
+        
         {% if user.is_authenticated %}
         document.getElementById("logout").addEventListener("click", () => {
             fetch("{% url 'logout' %}", {
@@ -60,6 +61,7 @@
             console.log("Home button clicked");
         });
         {% endif %}
+        
     </script>
 </body>
 </html>

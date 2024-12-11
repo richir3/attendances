@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Il tuo QR Code per l'evento</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .qr-code {
+            text-align: center;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Buongiorno {{ attender.name }}</h1>
+        <p>Siamo lieti di confermare la tua registrazione all'evento.</p>
+        <p>Ecco il tuo codice QR da mostrare all'ingresso:</p>
+        <div class="qr-code">
+            <img src="{{ qr_code_url }}" alt="QR Code" />
+        </div>
+        <p>Ti aspettiamo!</p>
+        <p>Il Team Evento</p>
+    </div>
+</body>
+</html>

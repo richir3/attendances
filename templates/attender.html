@@ -38,27 +38,26 @@
 {% block scripts %}
     <script>
         document.getElementById('send-qr').addEventListener('click', function() {
-            fetch('{% url "mail_code" attender.id %}', {
-                method: 'POST',
+            sendMail();
+        });
+
+        async function sendMail(){
+            const csrfToken = getCookie("csrftoken");
+            const response = await fetch('{% url "mail_code" attender.id %}', {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
-                }
-            }).then(response => {
-                if (response.ok) {
-                    alert('QR code sent');
-                } else {
-                    alert('Error sending QR code');
-                }
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrfToken,
+                },
             });
 
             const data = await response.json();
-
+    
             if (response.ok) {
                 alert(data.message);
             } else {
-                alert(`Error: ${data.error || 'Unknown error'}`);
+                alert(`Error: ${data.error || "Unknown error"}`);
             }
-        });
+        };
     </script>
 {% endblock %}

@@ -8,9 +8,12 @@ from django.urls import reverse
 from .models import Attender, Event, Attendance
 from .forms import AttenderForm, EventForm, AddEventForm
 from io import BytesIO
-from django.core.mail import send_mail, EmailMessage
+from django.core.mail import send_mail, EmailMessage, EmailMultiAlternatives
 from django.conf import settings
 import qrcode
+from django.core.files.base import ContentFile
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 # Create your views here.
 @login_required
@@ -234,28 +237,49 @@ def send_email(request):
     mail.send()
     return HttpResponse("Email sent")
 
+def generate_qr_code(data):
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(data)
+    qr.make(fit=True)
+
+    img = qr.make_image(fill="black", back_color="white")
+    buffer = BytesIO()
+    img.save(buffer, format="PNG")
+    buffer.seek(0)
+    return buffer.getvalue()
+
 @login_required
 def send_qr_code_mail(request, attender_id):
     if request.method == "POST":
         attender = Attender.objects.get(id=attender_id)
 
-        # Generate the QR code
-        qr = qrcode.QRCode(
-            version=1,
-            error_correction=qrcode.constants.ERROR_CORRECT_L,
-            box_size=10,
-            border=4,
+        qr_data = f"codice-attender-{attender.id}"
+        qr_image = generate_qr_code(qr_data)
+        
+        # Salva il QR Code come immagine
+        qr_code_url = f"data:image/png;base64,{ContentFile(qr_image).read()}"
+        
+        # Render del template
+        html_content = render_to_string("email/qr_email.html", {"attender": attender, "qr_code_url": qr_code_url})
+        text_content = strip_tags(html_content)  # Versione plain text
+        
+        # Configura la mail
+        email = EmailMultiAlternatives(
+            subject="Il tuo codice QR per l'evento",
+            body=text_content,
+            from_email=settings.EMAIL_HOST_USER,
+            to=[attender.email],
         )
-        img = qr.make(attender.code)
+        email.attach_alternative(html_content, "text/html")
+        
+        # Invia la mail
+        email.send()
 
-        # create an email with the img in it
-        subject = "Your QR code"
-        message = "Here is your QR code"
-        email_from = settings.EMAIL_HOST_USER
-        recipient_list = [attender.email]
-        mail = EmailMessage(subject, message, email_from, recipient_list)
-        mail.attach("qr_code.png", img.getvalue(), "image/png")
-        mail.send()
         return JsonResponse({"status": "success", "message": "Email sent"})
     else:
         return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)

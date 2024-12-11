@@ -28,9 +28,6 @@
                 qrContent = decodedText; // Memorizza il contenuto del QR
                 confirmQrContent(qrContent); // Chiedi conferma all'utente
             },
-            {% comment %} (errorMessage) => {
-                console.log("Errore di scansione:", errorMessage);
-            } {% endcomment %}
         );
     }
 
@@ -38,7 +35,7 @@
     function confirmQrContent(content) {
         reader.stop(); // Ferma il lettore QR temporaneamente
 
-        const userConfirmed = confirm(`Contenuto scansionato: ${content}. Vuoi confermare?`);
+        const userConfirmed = confirm(`Scanned content: ${content}. Do you confirm?`);
         if (userConfirmed) {
             sendQrContent(content); // Invia i dati
         } else {
