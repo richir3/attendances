@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Il tuo QR Code per l'evento</title>
+    <title>Tu Código QR para el evento</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -23,14 +23,13 @@
 </head>
 <body>
     <div class="container">
-        <h1>Buongiorno {{ attender.name }}</h1>
-        <p>Siamo lieti di confermare la tua registrazione all'evento.</p>
-        <p>Ecco il tuo codice QR da mostrare all'ingresso:</p>
+        <h1>Hola {{ attender.name }}</h1>
+        <p></p>
+        <p>Aquí tienes tu código qr para registrar tu asistencia a eventos:</p>
         <div class="qr-code">
-            <img src="base64,{{ qr }}" alt="QR Code">
+            <img src="data:image/png;base64,{{ qr }}" alt="Codigo QR">
         </div>
-        <p>Ti aspettiamo!</p>
-        <p>Il Team Evento</p>
+        <p>Si no lee el código anterior directamente, encontrará la imagen adjunta a este correo electrónico.</p>
     </div>
 </body>
 </html>
