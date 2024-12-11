@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block header%}
+    Attenders
+{% endblock %}
+
+{% block content %}
+    <button id="add-attender">Add attender</button>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Surname</th>
+                <th>Email</th>
+                <th>Attendances</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for attender in attenders %}
+                <tr>
+                    <td>{{ attender.attender.name }}</td>
+                    <td>{{ attender.attender.surname }}</td>
+                    <td>{{ attender.attender.email }}</td>
+                    <td>{{ attender.attendances }}</td>
+                    <td><button id="redirect-attender-{{ attender.attender.id }}">View</button></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <button id="download">Download resume</button>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        document.getElementById('add-attender').addEventListener('click', function() {
+            window.location.href = '{% url "add_attender" %}';
+        });
+
+        {% for attender in attenders %}
+            document.getElementById('redirect-attender-{{ attender.attender.id }}').addEventListener('click', function() {
+                window.location.href = '{% url "attender_overview" attender.attender.id %}';
+            });
+        {% endfor %}
+
+        document.getElementById('download').addEventListener('click', function() {
+            window.location.href = '{% url "download_attendances" %}';
+        });
+    </script>
+{% endblock scripts %}
+    
+

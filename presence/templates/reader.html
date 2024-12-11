@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}QR Code Scanner{% endblock %}
+{% block header %}QR Code Scanner{% endblock %}
+
+{% block content %}
+    <div id="buttons-container">
+        <button id="start-scan">Start scanning</button>
+        <button id="stop-scan" disabled>Stop scanning</button>
+    </div>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div id="reader"></div>
+{% endblock %}
+
+{% block scripts%}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+<script>
+    const reader = new Html5Qrcode("reader");
+    let qrContent = null; // Per memorizzare il contenuto del QR
+
+    // Avvia il lettore QR
+    function startQrScanner() {
+        reader.start(
+            { facingMode: "environment" }, // Usa la fotocamera posteriore
+            { fps: 10, qrbox: { width: 250, height: 250 } },
+            (decodedText) => {
+                qrContent = decodedText; // Memorizza il contenuto del QR
+                confirmQrContent(qrContent); // Chiedi conferma all'utente
+            },
+            {% comment %} (errorMessage) => {
+                console.log("Errore di scansione:", errorMessage);
+            } {% endcomment %}
+        );
+    }
+
+    // Chiedi conferma con un popup e invia i dati
+    function confirmQrContent(content) {
+        reader.stop(); // Ferma il lettore QR temporaneamente
+
+        const userConfirmed = confirm(`Contenuto scansionato: ${content}. Vuoi confermare?`);
+        if (userConfirmed) {
+            sendQrContent(content); // Invia i dati
+        } else {
+            resetScanner(); // Ripristina lo scanner
+        }
+    }
+
+    // Invia il contenuto al server
+    async function sendQrContent(content) {
+        const csrfToken = getCookie("csrftoken");
+        try {
+            const response = await fetch("{% url 'post_qr_data' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrfToken,
+                },
+                body: JSON.stringify({
+                    content: content,
+                    date: document.getElementById("event-form").value
+                }),
+            });
+    
+            // Risolvi la promise restituita da response.json()
+            const data = await response.json();
+    
+            // Controlla lo stato della risposta per eventuali errori
+            if (response.ok) {
+                console.log(data.message); // Stampa il messaggio nella console
+                alert(data.message); // Mostra il messaggio in un alert
+            } else {
+                console.error("Errore dal server:", data.error || "Errore sconosciuto");
+                alert(`Errore: ${data.error || "Errore sconosciuto"}`);
+            }
+    
+            resetScanner(); // Ripristina lo scanner dopo l'invio
+        } catch (error) {
+            console.error("Errore durante l'invio:", error);
+            alert("Errore durante l'invio. Per favore riprova.");
+            resetScanner(); // Ripristina lo scanner in caso di errore
+        }
+    }    
+
+    // Resetta il lettore QR
+    function resetScanner() {
+        qrContent = null;
+        startQrScanner(); // Riavvia il lettore QR
+    }
+
+    // quando si clicca sul bottone start avvia scanner
+    document.getElementById("start-scan").addEventListener("click", () => {
+        document.getElementById("start-scan").disabled = true;
+        document.getElementById("stop-scan").disabled = false;
+        startQrScanner();
+    });
+
+    document.getElementById("stop-scan").addEventListener("click", () => {
+        // refresh the page
+        location.reload();
+    });
+    
+</script>
+{% endblock %}

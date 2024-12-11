@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Home - My Django App{% endblock %}
+{% block header %}Home Page{% endblock %}
+
+{% block content %}
+    <p>Content of the home page.</p>
+    {% for functionality in functionalities %}
+        <button id="{{functionality}}">{{functionality.name}}</button>
+    {% endfor %}
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+{% for functionality in functionalities %}
+    document.getElementById("{{functionality}}").addEventListener("click", function() {
+        window.location.href = "{{functionality.url}}";
+        console.log("{{functionality.name}} button clicked");
+    });
+{% endfor %}
+</script>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    Create event
+{% endblock %}
+
+{% block content %}
+    <div>
+        <p>Next events:</p>
+        <ul>
+        {% for event in events %}
+            <li>{{ event }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+    
+    <div>
+        <p>Create a new event:</p>
+        <form method="POST" action="{% url 'add_event' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Create Event">
+        </form>
+    </div>
+{% endblock %}
