@@ -1,4 +1,4 @@
-import json, random, openpyxl, datetime
+import json, random, openpyxl, datetime, base64, qrcode
 from openpyxl.styles import Font, Alignment
 import pandas as pd
 from django.shortcuts import render, redirect
@@ -10,10 +10,10 @@ from .forms import AttenderForm, EventForm, AddEventForm
 from io import BytesIO
 from django.core.mail import send_mail, EmailMessage, EmailMultiAlternatives
 from django.conf import settings
-import qrcode
 from django.core.files.base import ContentFile
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+
 
 # Create your views here.
 @login_required
@@ -37,8 +37,12 @@ def home(request):
 
 @login_required
 def qr_reader_view(request):
+    codes = dict()
+    for a in Attender.objects.all():
+        codes[a.code] = a.name + " " + a.surname
+
     form = EventForm()
-    return render(request, "reader.html", {"form": form})
+    return render(request, "reader.html", {"form": form, "codes": codes})
 
 @login_required
 def post_qr_data(request):
@@ -237,35 +241,40 @@ def send_email(request):
     mail.send()
     return HttpResponse("Email sent")
 
-def generate_qr_code(data):
-    qr = qrcode.QRCode(
-        version=1,
-        error_correction=qrcode.constants.ERROR_CORRECT_L,
-        box_size=10,
-        border=4,
-    )
-    qr.add_data(data)
-    qr.make(fit=True)
-
-    img = qr.make_image(fill="black", back_color="white")
-    buffer = BytesIO()
-    img.save(buffer, format="PNG")
-    buffer.seek(0)
-    return buffer.getvalue()
-
 @login_required
 def send_qr_code_mail(request, attender_id):
     if request.method == "POST":
         attender = Attender.objects.get(id=attender_id)
 
-        qr_data = f"codice-attender-{attender.id}"
-        qr_image = generate_qr_code(qr_data)
-        
-        # Salva il QR Code come immagine
-        qr_code_url = f"data:image/png;base64,{ContentFile(qr_image).read()}"
-        
+        # generate qr
+        code = attender.code
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_L,
+            box_size=10,
+            border=4,
+        )
+        qr.add_data(code)
+        qr.make(fit=True)
+
+        # Converti il QR Code in un'immagine PNG
+        img = qr.make_image(fill_color="black", back_color="white")
+        buffer = BytesIO()
+        img.save(buffer, format="PNG")
+        buffer.seek(0)
+
+        # Codifica l'immagine in base64
+        img_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+
+        context = {
+            "attender": attender,
+            "qr": img_base64,
+        }
+
+        print(context)
+
         # Render del template
-        html_content = render_to_string("email/qr_email.html", {"attender": attender, "qr_code_url": qr_image})
+        html_content = render_to_string("email/qr_email.html", context=context)
         text_content = strip_tags(html_content)  # Versione plain text
         
         # Configura la mail
@@ -275,7 +284,10 @@ def send_qr_code_mail(request, attender_id):
             from_email=settings.EMAIL_HOST_USER,
             to=[attender.email],
         )
-        email.attach_alternative(html_content, "text/html")
+
+        # download locale della mail per debug
+        with open("email.html", "w") as f:
+            f.write(html_content)
         
         # Invia la mail
         email.send()

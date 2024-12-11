@@ -16,6 +16,8 @@
 {% block scripts%}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
 <script>
+    const codes = {{ codes|safe }};
+    console.log(codes);
     const reader = new Html5Qrcode("reader");
     let qrContent = null; // Per memorizzare il contenuto del QR
 
@@ -35,7 +37,7 @@
     function confirmQrContent(content) {
         reader.stop(); // Ferma il lettore QR temporaneamente
 
-        const userConfirmed = confirm(`Scanned content: ${content}. Do you confirm?`);
+        const userConfirmed = confirm(`Scanned content: ${getUserName(content)}. Do you confirm?`);
         if (userConfirmed) {
             sendQrContent(content); // Invia i dati
         } else {
@@ -94,6 +96,11 @@
         // refresh the page
         location.reload();
     });
+
+    // leggi il codice e ritorna il nome
+    function getUserName(qrContent) {
+        return codes[qrContent] || "Unknown";
+    }
     
 </script>
 {% endblock %}
