@@ -271,11 +271,9 @@ def send_qr_code_mail(request, attender_id):
             "qr": img_base64,
         }
 
-        print(context)
-
         # Render del template
         html_content = render_to_string("email/qr_email.html", context=context)
-        text_content = strip_tags(html_content)  # Versione plain text
+        text_content = strip_tags(html_content)
         
         # Configura la mail
         email = EmailMultiAlternatives(
@@ -285,7 +283,7 @@ def send_qr_code_mail(request, attender_id):
             to=[attender.email],
         )
 
-        # Invia la mail
+        # Aggiungi il contenuto HTML
         email.attach_alternative(html_content, "text/html")
         email.send()
 
