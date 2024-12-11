@@ -235,22 +235,27 @@ def send_email(request):
     return HttpResponse("Email sent")
 
 @login_required
-def send_qr_code(request, attender_id):
-    attender = Attender.objects.get(id=attender_id)
+def send_qr_code_mail(request, attender_id):
+    if request.method == "POST":
+        attender = Attender.objects.get(id=attender_id)
 
-    # Generate the QR code
-    qr = qrcode.QRCode(
-        version=1,
-        error_correction=qrcode.constants.ERROR_CORRECT_L,
-        box_size=10,
-        border=4,
-    )
-    img = qr.make(attender.code)
+        # Generate the QR code
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_L,
+            box_size=10,
+            border=4,
+        )
+        img = qr.make(attender.code)
 
-    # create an email with the img in it
-    subject = "Your QR code"
-    message = "Here is your QR code"
-    email_from = settings.EMAIL_HOST_USER
-    recipient_list = [attender.email]
-    mail = EmailMessage(subject, message, email_from, recipient_list)
-    mail.attach("qr_code.png", img.getvalue(), "image/png")
+        # create an email with the img in it
+        subject = "Your QR code"
+        message = "Here is your QR code"
+        email_from = settings.EMAIL_HOST_USER
+        recipient_list = [attender.email]
+        mail = EmailMessage(subject, message, email_from, recipient_list)
+        mail.attach("qr_code.png", img.getvalue(), "image/png")
+        mail.send()
+        return JsonResponse({"status": "success", "message": "Email sent"})
+    else:
+        return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)

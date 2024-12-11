@@ -67,11 +67,9 @@
     
             // Controlla lo stato della risposta per eventuali errori
             if (response.ok) {
-                console.log(data.message); // Stampa il messaggio nella console
                 alert(data.message); // Mostra il messaggio in un alert
             } else {
-                console.error("Errore dal server:", data.error || "Errore sconosciuto");
-                alert(`Errore: ${data.error || "Errore sconosciuto"}`);
+                alert(`Error: ${data.error || "Unknown error"}`);
             }
     
             resetScanner(); // Ripristina lo scanner dopo l'invio

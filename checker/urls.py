@@ -13,5 +13,5 @@ urlpatterns = [
     # path('delete-attender/<int:pk>/', views.delete_attender, name='delete_attender'),
     path('download-attendances/', views.download_attendances, name='download_attendances'),
     path('add-event/', views.add_event, name='add_event'),
-    path('mail/', views.send_email, name='send_mail'),
+    path('mail-code/<int:attender_id>/', views.send_qr_code_mail, name='mail_code'),
 ]

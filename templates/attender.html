@@ -29,5 +29,36 @@
                 </tr>
             {% endfor %}
         </tbody>
+    </table>
 
+    <h2>Actions</h2>
+    <button id="send-qr">Send QR code</button>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        document.getElementById('send-qr').addEventListener('click', function() {
+            fetch('{% url "mail_code" {{ attender.id }} %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    alert('QR code sent');
+                } else {
+                    alert('Error sending QR code');
+                }
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert(data.message);
+            } else {
+                alert(`Error: ${data.error || 'Unknown error'}`);
+            }
+        });
+    </script>
 {% endblock %}
