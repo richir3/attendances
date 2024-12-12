@@ -301,7 +301,6 @@ def send_qr_code_mail(request, attender_id):
         try:
             email.send()
         except Exception as e:
-            print(e)
             return JsonResponse({"status": "error", "message": str(e)}, status=500)
 
         return JsonResponse({"status": "success", "message": "Correo enviado"}, status=200)
