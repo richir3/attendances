@@ -248,9 +248,17 @@ def send_qr_code_mail(request, attender_id):
 
         # generate qr
         code = attender.code
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_L,
+            box_size=10,
+            border=4,
+        )
+        qr.add_data(code)
+        qr.make(fit=True)
 
         # Converti il QR Code in un'immagine PNG
-        img = qrcode.make(code)
+        img = qr.make_image(fill_color="black", back_color="white")
         buffer = BytesIO()
         img.save(buffer, format="PNG")
         buffer.seek(0)
@@ -280,7 +288,7 @@ def send_qr_code_mail(request, attender_id):
         try:
             email.send()
         except Exception as e:
-            print(e)
+            print(e.with_traceback())
             return JsonResponse({"status": "error", "message": str(e)}, status=500)
 
         return JsonResponse({"status": "success", "message": "Correo enviado"}, status=200)
