@@ -141,11 +141,16 @@ def add_attender(request):
                 email_verified=False
             )
             attender.save()
+
+            try:
+                send_qr(attender.id)
+            except Exception as e:
+                pass
+            
             return redirect("list_attenders")
     else:
         form = AttenderForm()
         return render(request, "add_attender.html", {"form": form})
-# commento
 
 @login_required
 def attender_overview(request, pk):
@@ -256,53 +261,56 @@ def add_event(request):
 @login_required
 def send_qr_code_mail(request, attender_id):
     if request.method == "POST":
-        attender = Attender.objects.get(id=attender_id)
-
-        # generate qr
-        code = attender.code
-        qr = qrcode.QRCode(
-            version=1,
-            error_correction=qrcode.constants.ERROR_CORRECT_L,
-            box_size=10,
-            border=4,
-        )
-        qr.add_data(code)
-        qr.make(fit=True)
-
-        # Converti il QR Code in un'immagine PNG
-        img = qr.make_image(fill_color="black", back_color="white")
-        buffer = BytesIO()
-        img.save(buffer, format="PNG")
-        buffer.seek(0)
-
-        # Codifica l'immagine in base64
-        img_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
-
-        context = {
-            "attender": attender,
-            "qr": img_base64,
-        }
-
-        # Render del template
-        html_content = render_to_string("email/qr_email.html", context=context)
-        text_content = strip_tags(html_content)
-        
-        # Configura la mail
-        email = EmailMultiAlternatives(
-            subject="Tu código QR para el evento",
-            body=text_content,
-            from_email=f'"Organización de eventos" <{settings.EMAIL_HOST_USER}>',
-            to=[attender.email],
-        )
-
-        email.attach_alternative(html_content, "text/html")
-        email.attach(f"codigo qr {attender.name} {attender.surname}.png", buffer.getvalue(), "image/png")
-        
         try:
-            email.send()
+            send_qr(attender_id)
         except Exception as e:
             return JsonResponse({"status": "error", "message": str(e)}, status=500)
-
         return JsonResponse({"status": "success", "message": "Correo enviado"}, status=200)
+        
     else:
         return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
+
+def send_qr(attender_id):
+    attender = Attender.objects.get(id=attender_id)
+
+    # generate qr
+    code = attender.code
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(code)
+    qr.make(fit=True)
+
+    # Converti il QR Code in un'immagine PNG
+    img = qr.make_image(fill_color="black", back_color="white")
+    buffer = BytesIO()
+    img.save(buffer, format="PNG")
+    buffer.seek(0)
+
+    # Codifica l'immagine in base64
+    img_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+
+    context = {
+        "attender": attender,
+        "qr": img_base64,
+    }
+
+    # Render del template
+    html_content = render_to_string("email/qr_email.html", context=context)
+    text_content = strip_tags(html_content)
+    
+    # Configura la mail
+    email = EmailMultiAlternatives(
+        subject="Tu código QR para el evento",
+        body=text_content,
+        from_email=f'"Organización de eventos" <{settings.EMAIL_HOST_USER}>',
+        to=[attender.email],
+    )
+
+    email.attach_alternative(html_content, "text/html")
+    email.attach(f"codigo qr {attender.name} {attender.surname}.png", buffer.getvalue(), "image/png")
+    
+    email.send()

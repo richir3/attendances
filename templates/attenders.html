@@ -9,7 +9,10 @@
 {% endblock %}
 
 {% block content %}
-    <button id="add-attender">Add attender</button>
+    <div>
+        <button id="add-attender">Add attender</button>
+        <button id="download">Download attendances</button>
+    </div>
     <table>
         <thead>
             <tr>
@@ -31,7 +34,7 @@
             {% endfor %}
         </tbody>
     </table>
-    <button id="download">Download resume</button>
+   
 {% endblock %}
 
 {% block scripts %}

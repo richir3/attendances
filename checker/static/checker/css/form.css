@@ -19,6 +19,7 @@ form label {
 
 /* Stile per i campi di input e textarea */
 form input[type="text"],
+form input[type="date"],
 form input[type="email"],
 form input[type="password"],
 form input[type="number"],

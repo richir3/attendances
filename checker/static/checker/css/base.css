@@ -3,7 +3,9 @@
     background-color: #29799b;
     color: white;
     padding: 10px;
-    z-index: 1000; /* Posizionamento in primo piano */
+    z-index: 1000; 
+    width: 100%;
+    top: 0;
 }
 
 .header-main {
@@ -56,9 +58,158 @@
 
 /*BODY*/
 body {
-    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f0f0f0;
+    font-family: Arial, sans-serif;
+    background: #f5f5f5; /* Colore di sfondo più chiaro */
+}
+
+
+/* Contenitore principale */
+.page-container {
+    width: 100%;
+    max-width: 1200px; /* Limita la larghezza massima */
+    background: #ffffff; /* Sfondo bianco */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Aggiunge l'ombra */
+    border-radius: 8px; /* Angoli arrotondati */
+    padding: 20px;
+    box-sizing: border-box; /* Considera il padding nella larghezza */
+    overflow: hidden;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+/* Contenuto interno */
+.content-container {
+    margin: 0 auto;
+    max-width: 800px; /* Limita la larghezza del contenuto */
+    text-align: center; /* Allinea il testo al centro */
+}
+
+/* Stile di base per le tabelle */
+table {
+    width: 100%; /* La tabella occupa tutta la larghezza del contenitore */
+    border-collapse: collapse; /* Unisce i bordi delle celle */
+    margin: 20px 0; /* Spazio sopra e sotto la tabella */
+    font-size: 1rem;
+    font-family: Arial, sans-serif;
+    text-align: left; /* Allinea il contenuto a sinistra */
+    background-color: #f9f9f9; /* Colore di sfondo */
+    border-radius: 8px; /* Angoli arrotondati */
+    overflow: hidden; /* Applica i bordi arrotondati */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Effetto ombra */
+}
+
+/* Bordi delle celle */
+table th, table td {
+    padding: 12px 15px; /* Spaziatura interna */
+    border: 1px solid #ddd; /* Bordo sottile */
+}
+
+/* Stile dell'intestazione della tabella */
+table th {
+    background-color: #467a9e; /* Colore blu */
+    color: white; /* Testo bianco */
+    font-weight: bold;
+    text-transform: uppercase; /* Maiuscolo per l'intestazione */
+}
+
+/* Riga pari e dispari (zebrate) */
+table tr:nth-child(even) {
+    background-color: #f2f2f2; /* Colore per le righe pari */
+}
+
+table tr:nth-child(odd) {
+    background-color: #ffffff; /* Colore per le righe dispari */
+}
+
+/* Stile al passaggio del mouse */
+table tr:hover {
+    background-color: #e0e7ff; /* Colore chiaro quando si passa con il mouse */
+    cursor: pointer; /* Cambia il cursore */
+}
+
+/* Allineamento testo nelle celle */
+table td {
+    text-align: left;
+}
+
+/* Stile di base per tutte le liste */
+ul, ol {
+    margin: 20px; /* Spaziatura esterna */
+    padding: 0; /* Rimuove il padding di default */
+    list-style-position: inside; /* Posiziona i marker dentro la lista */
+    font-size: 1rem;
+    font-family: Arial, sans-serif;
+    color: #333; /* Colore del testo */
+}
+
+/* Stile per liste non ordinate (ul) */
+ul {
+    list-style-type: disc; /* Marker standard */
+}
+
+/* Stile per liste ordinate (ol) */
+ol {
+    list-style-type: decimal; /* Marker numerico */
+}
+
+/* Stile per gli elementi della lista */
+ul li, ol li {
+    background-color: #f9f9f9; /* Sfondo chiaro */
+    margin: 8px 0; /* Spaziatura tra gli elementi */
+    padding: 10px 15px; /* Spaziatura interna */
+    border-radius: 8px; /* Angoli arrotondati */
+    border: 1px solid #ddd; /* Bordo sottile */
+    transition: background-color 0.3s, transform 0.2s; /* Transizione per interattività */
+}
+
+/* Interattività: al passaggio del mouse */
+ul li:hover, ol li:hover {
+    background-color: #e0e7ff; /* Sfondo chiaro blu */
+    transform: scale(1.02); /* Ingrandisce leggermente */
+    cursor: pointer; /* Cambia il cursore */
+}
+
+/* Marker personalizzati per liste non ordinate */
+ul li::marker {
+    color: #467a9e; /* Colore marker blu */
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+/* Marker personalizzati per liste ordinate */
+ol li::marker {
+    color: #5a9a6e; /* Colore marker verde */
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+/* Liste nidificate (sotto-liste) */
+ul ul, ol ol {
+    margin-left: 20px; /* Spaziatura aggiuntiva per indentazione */
+}
+
+/* Sotto-liste: modifica leggermente il design */
+ul ul li, ol ol li {
+    background-color: #ffffff; /* Sfondo bianco */
+    border: 1px dashed #ddd; /* Bordo tratteggiato */
+    color: #555; /* Colore testo più chiaro */
+}
+
+
+@media (max-width: 768px) {
+    table {
+        font-size: 0.9rem; /* Riduce il testo per schermi piccoli */
+    }
+
+    table th, table td {
+        padding: 10px; /* Riduce i padding */
+    }
+
+    ul li, ol li {
+        padding: 8px 12px; /* Riduce il padding per schermi piccoli */
+        font-size: 0.9rem; /* Riduce la dimensione del testo */
+    }
 }
 
