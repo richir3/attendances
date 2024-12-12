@@ -9,21 +9,35 @@
     {% block css %}{% endblock %}
 </head>
 <body>
-    <header>
-        <h1>{% block header %}Base template{% endblock %}</h1>
-        <nav>
+    <header class=>
+        <div class="navbar">
+            <!-- Titolo dinamico della pagina -->
+            <div class="navbar-brand">
+                {% block header %}Base template{% endblock %}
+            </div>
+    
+            <!-- Bottoni visibili solo per utenti autenticati -->
             {% if user.is_authenticated %}
-                <div>
-                    <button id="logout"><img style="width: 50px; height: 50px;" src="{% static "checker/images/logout.png" %}"></button>
-                    <button id="home"><img style="width: 50px; height: 50px;" src="{% static "checker/images/home.png" %}"></button>
+                <div class="navbar-buttons">
+                    <!-- Bottone Logout -->
+                    <button id="logout" class="navbar-button logout-button">
+                        <img class="navbar-image" src="{% static 'checker/images/logout.png' %}" alt="Logout" class="header-button-image">
+                    </button>
+    
+                    <!-- Bottone Home -->
+                    <button id="home" class="navbar-button">
+                        <img class="navbar-image" src="{% static 'checker/images/home.png' %}" alt="Home" class="header-button-image">
+                    </button>
                 </div>
-                <div>Welcome, {{ user.username }}!</div>
             {% endif %}
-            
-        </nav>
+            </div>
     </header>
+    
 
     <main>
+        {% if user.is_authenticated %}
+        <div>Welcome, {{ user.username }}!</div>
+        {% endif %}
         {% block content %}
         <p>Welcome to My Django App!</p>
         {% endblock %}

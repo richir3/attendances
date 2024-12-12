@@ -4,7 +4,10 @@ from .models import Attender, Event
 import datetime
 
 class EventForm(forms.Form):
-    default_event = Event.objects.filter(date__gte=datetime.date.today()).first()
+    try:
+        default_event = Event.objects.get(date=datetime.date.today())
+    except Event.DoesNotExist:
+        default_event = None
     event = forms.ModelChoiceField(
         queryset=Event.objects.filter(date__gte=datetime.date.today()), 
         initial=default_event, 
