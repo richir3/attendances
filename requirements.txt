@@ -1,6 +1,5 @@
 asgiref==3.8.1
 cffi==1.17.1
-cryptography==44.0.0
 Django==5.1.4
 django-extensions==3.2.3
 et_xmlfile==2.0.0
