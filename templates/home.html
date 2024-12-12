@@ -1,12 +1,18 @@
 {% extends "base.html" %}
 
 {% block title %}Home{% endblock %}
+
 {% block header %}Home Page{% endblock %}
 
+{% block css %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'checker/css/home.css' %}">
+{% endblock %}
+
 {% block content %}
-    <p>Content of the home page.</p>
+    <p>Options:</p>
     {% for functionality in functionalities %}
-        <button id="{{functionality}}">{{functionality.name}}</button>
+        <button class="button-functionality" id="{{functionality}}">{{functionality.name}}</button>
     {% endfor %}
 {% endblock %}
 

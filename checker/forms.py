@@ -8,13 +8,14 @@ class EventForm(forms.Form):
         default_event = Event.objects.get(date=datetime.date.today())
     except Event.DoesNotExist:
         default_event = None
+    
     event = forms.ModelChoiceField(
-        queryset=Event.objects.filter(date__gte=datetime.date.today()), 
+        queryset=Event.objects.filter(date__gte=datetime.date.today()).order_by('date'), 
         initial=default_event, 
         required=True,
         empty_label="Select an event", 
         widget=forms.Select(
-            attrs={"class": "form-control", 
+            attrs={"class": "form-control form-select", 
                    "id": "event-form"
                 }
             )

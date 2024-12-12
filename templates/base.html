@@ -6,36 +6,41 @@
     <title>{% block title %}Base template{% endblock %}</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'checker/css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'checker/css/form.css' %}">
     {% block css %}{% endblock %}
 </head>
 <body>
     <header class="header">
-        <!-- Titolo dinamico della pagina -->
-        <div class="navbar-brand">
-            {% block header %}Base template{% endblock %}
+        <div class="header-main">
+            <!-- Titolo dinamico della pagina -->
+            <div class="navbar-brand">
+                {% block header %}Base template{% endblock %}
+            </div>
+            
+
+            <!-- Bottoni visibili solo per utenti autenticati -->
+            {% if user.is_authenticated %}
+                <div class="navbar-buttons">
+                    <!-- Bottone Logout -->
+                    <button id="logout" class="navbar-button logout-button">
+                        <img class="navbar-image" src="{% static 'checker/images/logout.png' %}" alt="Logout" class="header-button-image">
+                    </button>
+
+                    <!-- Bottone Home -->
+                    <button id="home" class="navbar-button">
+                        <img class="navbar-image" src="{% static 'checker/images/home.png' %}" alt="Home" class="header-button-image">
+                    </button>
+                </div>
+            {% endif %}
         </div>
 
-        <!-- Bottoni visibili solo per utenti autenticati -->
         {% if user.is_authenticated %}
-            <div class="navbar-buttons">
-                <!-- Bottone Logout -->
-                <button id="logout" class="navbar-button logout-button">
-                    <img class="navbar-image" src="{% static 'checker/images/logout.png' %}" alt="Logout" class="header-button-image">
-                </button>
-
-                <!-- Bottone Home -->
-                <button id="home" class="navbar-button">
-                    <img class="navbar-image" src="{% static 'checker/images/home.png' %}" alt="Home" class="header-button-image">
-                </button>
-            </div>
+        <div>User: {{ user.username }}</div>
         {% endif %}
     </header>
     
 
     <main>
-        {% if user.is_authenticated %}
-        <div>Welcome, {{ user.username }}!</div>
-        {% endif %}
         {% block content %}
         <p>Welcome to My Django App!</p>
         {% endblock %}

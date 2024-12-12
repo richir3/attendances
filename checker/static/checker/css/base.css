@@ -1,12 +1,17 @@
 /* Navbar container */
-.header {
-    justify-content: space-between;
-    align-items: center;
+.header{
     background-color: #29799b;
     color: white;
+    padding: 10px;
+    z-index: 1000; /* Posizionamento in primo piano */
+}
+
+.header-main {
+    justify-content: space-between;
+    align-items: center;
     padding: 10px 20px;
     display: flex;
-    z-index: 1000; /* Posizionamento in primo piano */
+    
 }
 
 .navbar-brand {
