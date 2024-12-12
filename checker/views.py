@@ -58,8 +58,31 @@ def post_qr_data(request):
             if Attendance.objects.filter(event=event, user=attender).exists():
                 response = JsonResponse({'status': 'error', 'error': 'Attender already attended to the event'}, status=400)
             else:
-                print("Creating attendance")
                 attendance = Attendance(event=event, user=attender)
+                
+
+                # send an email to the attender to confirm the attendance
+                context = {
+                    "event": event,
+                }
+
+                html_content = render_to_string("email/confirm_attendance.html", context=context)
+                text_content = strip_tags(html_content)
+
+                email = EmailMessage(
+                    subject="Asistencia confirmada",
+                    body=text_content,
+                    from_email=f'"Organización de eventos" <{settings.EMAIL_HOST_USER}>',
+                    to=[attender.email],
+                )
+
+                email.attach_alternative(html_content, "text/html")
+
+                try:
+                    email.send()
+                except Exception as e:
+                    response = JsonResponse({'status': 'error con el correo', 'error': str(e)}, status=500)
+
                 attendance.save()
                 response = JsonResponse({'status': 'success', 'message': 'Attendance saved'}, status=200)
         except KeyError as e:
@@ -129,10 +152,9 @@ def attender_overview(request, pk):
     attender = Attender.objects.get(pk=pk)
     context = {
         "attender": attender,
-        "events" : Event.objects.all(),
+        "events" : Event.objects.all().order_by("date"),
         "attendances" : [a.event for a in Attendance.objects.all().filter(user=attender)]
     }
-    print(context)
 
     return render(request, "attender.html", context=context)
 
@@ -232,16 +254,6 @@ def add_event(request):
         return render(request, "add_event.html", context)
 
 @login_required
-def send_email(request):
-    subject = "Subject"
-    message = "Message"
-    email_from = settings.EMAIL_HOST_USER
-    recipient_list = ["roxierba@gmail.com"]
-    mail = EmailMessage(subject, message, email_from, recipient_list)
-    mail.send()
-    return HttpResponse("Email sent")
-
-@login_required
 def send_qr_code_mail(request, attender_id):
     if request.method == "POST":
         attender = Attender.objects.get(id=attender_id)
@@ -279,18 +291,18 @@ def send_qr_code_mail(request, attender_id):
         email = EmailMultiAlternatives(
             subject="Tu código QR para el evento",
             body=text_content,
-            from_email=settings.EMAIL_HOST_USER,
+            from_email=f'"Organización de eventos" <{settings.EMAIL_HOST_USER}>',
             to=[attender.email],
         )
 
         email.attach_alternative(html_content, "text/html")
         email.attach(f"codigo qr {attender.name} {attender.surname}.png", buffer.getvalue(), "image/png")
-        email.send()
-        # try:
-            
-        # except Exception as e:
-        #     print(e)
-        #     return JsonResponse({"status": "error", "message": str(e)}, status=500)
+        
+        try:
+            email.send()
+        except Exception as e:
+            print(e)
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)
 
         return JsonResponse({"status": "success", "message": "Correo enviado"}, status=200)
     else:

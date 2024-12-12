@@ -7,7 +7,10 @@ class Event(models.Model):
     location = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
-        return f"{self.name} - {self.date.strftime('%d/%m/%Y')}"
+        return f"{self.date.strftime('%d/%m/%Y')}"
+    
+    def __repr__(self) -> str:
+        return f"{self.date.strftime('%d/%m/%Y')}"
 
 class Attender(models.Model):
     name = models.CharField(max_length=250)

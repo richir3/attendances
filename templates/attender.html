@@ -20,7 +20,7 @@
         <tbody>
             {% for event in events %}
                 <tr>
-                    <td>{{ event.date }}</td>
+                    <td>{{ event }}</td>
                     {% if event in attendances %}
                         <td>Yes</td>
                     {% else %}
