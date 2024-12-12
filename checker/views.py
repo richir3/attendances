@@ -69,7 +69,7 @@ def post_qr_data(request):
                 html_content = render_to_string("email/confirm_attendance.html", context=context)
                 text_content = strip_tags(html_content)
 
-                email = EmailMessage(
+                email = EmailMultiAlternatives(
                     subject="Asistencia confirmada",
                     body=text_content,
                     from_email=f'"Organización de eventos" <{settings.EMAIL_HOST_USER}>',
