@@ -277,7 +277,7 @@ def send_qr_code_mail(request, attender_id):
         
         # Configura la mail
         email = EmailMultiAlternatives(
-            subject="Il tuo codice QR per l'evento",
+            subject="Tu código QR para el evento",
             body=text_content,
             from_email="Organización de eventos",
             to=[attender.email],
@@ -285,8 +285,11 @@ def send_qr_code_mail(request, attender_id):
 
         email.attach_alternative(html_content, "text/html")
         email.attach(f"codigo qr {attender.name} {attender.surname}.png", buffer.getvalue(), "image/png")
-        email.send()
+        try:
+            email.send()
+        except Exception as e:
+            print(e)
 
-        return JsonResponse({"status": "success", "message": "Email sent"})
+        return JsonResponse({"status": "success", "message": "Correo enviado"}, status=200)
     else:
         return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
