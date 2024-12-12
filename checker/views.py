@@ -285,11 +285,12 @@ def send_qr_code_mail(request, attender_id):
 
         email.attach_alternative(html_content, "text/html")
         email.attach(f"codigo qr {attender.name} {attender.surname}.png", buffer.getvalue(), "image/png")
-        try:
-            email.send(fail_silently=False)
-        except Exception as e:
-            print(e.with_traceback())
-            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+        email.send(fail_silently=False)
+        # try:
+            
+        # except Exception as e:
+        #     print(e)
+        #     return JsonResponse({"status": "error", "message": str(e)}, status=500)
 
         return JsonResponse({"status": "success", "message": "Correo enviado"}, status=200)
     else:
