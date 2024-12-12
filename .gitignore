@@ -3,3 +3,4 @@ presence/__pycache__/
 checker/__pycache__/
 cert.crt
 cert.key
+db.sqlite3
