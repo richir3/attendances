@@ -9,28 +9,26 @@
     {% block css %}{% endblock %}
 </head>
 <body>
-    <header class=>
-        <div class="navbar">
-            <!-- Titolo dinamico della pagina -->
-            <div class="navbar-brand">
-                {% block header %}Base template{% endblock %}
+    <header class="header">
+        <!-- Titolo dinamico della pagina -->
+        <div class="navbar-brand">
+            {% block header %}Base template{% endblock %}
+        </div>
+
+        <!-- Bottoni visibili solo per utenti autenticati -->
+        {% if user.is_authenticated %}
+            <div class="navbar-buttons">
+                <!-- Bottone Logout -->
+                <button id="logout" class="navbar-button logout-button">
+                    <img class="navbar-image" src="{% static 'checker/images/logout.png' %}" alt="Logout" class="header-button-image">
+                </button>
+
+                <!-- Bottone Home -->
+                <button id="home" class="navbar-button">
+                    <img class="navbar-image" src="{% static 'checker/images/home.png' %}" alt="Home" class="header-button-image">
+                </button>
             </div>
-    
-            <!-- Bottoni visibili solo per utenti autenticati -->
-            {% if user.is_authenticated %}
-                <div class="navbar-buttons">
-                    <!-- Bottone Logout -->
-                    <button id="logout" class="navbar-button logout-button">
-                        <img class="navbar-image" src="{% static 'checker/images/logout.png' %}" alt="Logout" class="header-button-image">
-                    </button>
-    
-                    <!-- Bottone Home -->
-                    <button id="home" class="navbar-button">
-                        <img class="navbar-image" src="{% static 'checker/images/home.png' %}" alt="Home" class="header-button-image">
-                    </button>
-                </div>
-            {% endif %}
-            </div>
+        {% endif %}
     </header>
     
 
