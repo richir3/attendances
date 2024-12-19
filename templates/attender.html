@@ -14,7 +14,8 @@
         <div class="user-info">
             <span>
                 <p>Usuario: {{ attender.name }} {{ attender.surname }}</p>
-                <p>Email: {{ attender.email }}</p>
+                <p>Cofradia: {{ attender.brotherhood.name }}</p>
+                <p>Email: {{ attender.brotherhood.email }}</p>
             </span>
             <span>
                 <button class="button-send-qr button-green" id="send-qr">Enviar código QR</button>

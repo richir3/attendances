@@ -306,7 +306,7 @@ def send_qr(attender_id):
     INFORMATION = "Información del asistente"
     NAME = f"Nombre: {attender.name.upper()}"
     SURNAME = f"Apellido: {attender.surname.upper()}"
-    # BROTHERHOOD = attender.brotherhood
+    BROTHERHOOD = f"Cófradia: {attender.brotherhood.name.upper()}"
     QR_CODE = f"Código QR:"
 
     # Generate qr code
@@ -333,7 +333,7 @@ def send_qr(attender_id):
     pdf.setFont("Helvetica", 18)
     pdf.drawCentredString(300, 710, NAME)
     pdf.drawCentredString(300, 690, SURNAME)
-    # pdf.drawCentredString(300, 690, f"Cófradia: {attender.brotherhood}")
+    pdf.drawCentredString(300, 690, BROTHERHOOD)
     pdf.drawCentredString(300, 650, QR_CODE)
 
     # QR code to PDF
