@@ -2,6 +2,9 @@ import json, random, openpyxl, datetime, base64, qrcode
 import pandas as pd
 from io import BytesIO
 from openpyxl.styles import Font, Alignment
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.utils import ImageReader
 from .models import Attender, Event, Attendance
 from .forms import AttenderForm, EventForm, AddEventForm
 from django.shortcuts import render, redirect
@@ -16,7 +19,6 @@ from django.utils.html import strip_tags
 # Create your views here.
 @login_required
 def home(request):
-
     class Functionality:
         def __init__(self, name, url):
             self.name = name
@@ -30,7 +32,7 @@ def home(request):
         Functionality("Gestionar asistentes", reverse("list_attenders")),
         Functionality("Gestionar eventos", reverse("add_event")),
     ]
-    
+
     return render(request, "home.html", {"functionalities": functionalities})
 
 @login_required
@@ -55,7 +57,6 @@ def post_qr_data(request):
             else:
                 attendance = Attendance(event=event, user=attender)
                 
-
                 # send an email to the attender to confirm the attendance
                 context = {
                     "event": event,
@@ -160,6 +161,8 @@ def attender_overview(request, pk):
 
 @login_required
 def download_attendances(request):
+    NO = "NO"
+    YES = "SI"
     events = Event.objects.all().order_by("date")
     event_dates = [e.date.strftime("%d/%m/%Y") for e in events]
 
@@ -171,9 +174,9 @@ def download_attendances(request):
         for e in events:
             #if a.events.filter(pk=e.pk).exists():
             if Attendance.objects.filter(event=e, user=a).exists():
-                data[a].append("YES")
+                data[a].append(YES)
             else:
-                data[a].append("NO")
+                data[a].append(NO)
 
     df = pd.DataFrame(data).T
     df.columns = event_dates
@@ -193,8 +196,7 @@ def download_attendances(request):
     wb = openpyxl.load_workbook(buffer)
     ws = wb.active  # Seleziona il primo foglio
 
-    # Modifiche al foglio di lavoro
-    
+    ## Modifiche al foglio di lavoro
     # imposta la prima riga come tipo data
     for cell in ws[1][1:]:
         cell.font = Font(bold=True)
@@ -204,9 +206,9 @@ def download_attendances(request):
     # imposta le celle con YES in verde e quelle con NO in rosso
     for row in ws.iter_rows(min_row=2, max_row=ws.max_row, min_col=2, max_col=ws.max_column):
         for cell in row:
-            if cell.value == "YES":
+            if cell.value == YES:
                 cell.fill = openpyxl.styles.PatternFill(start_color="00FF00", end_color="00FF00", fill_type="solid")
-            elif cell.value == "NO":
+            elif cell.value == NO:
                 cell.fill = openpyxl.styles.PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
 
     # adatta la larghezza delle colonne
@@ -264,10 +266,66 @@ def send_qr_code_mail(request, attender_id):
     else:
         return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
 
+# def send_qr_image(attender_id):
+#     attender = Attender.objects.get(id=attender_id)
+
+#     # generate qr
+#     code = attender.code
+#     qr = qrcode.QRCode(
+#         version=1,
+#         error_correction=qrcode.constants.ERROR_CORRECT_L,
+#         box_size=10,
+#         border=4,
+#     )
+#     qr.add_data(code)
+#     qr.make(fit=True)
+
+#     # Converti il QR Code in un'immagine PNG
+#     img = qr.make_image(fill_color="black", back_color="white")
+#     buffer = BytesIO()
+#     img.save(buffer, format="PNG")
+#     buffer.seek(0)
+
+#     # Codifica l'immagine in base64
+#     img_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+
+#     context = {
+#         "attender": attender,
+#         "qr": img_base64,
+#     }
+
+
+#     # Render del template
+#     html_content = render_to_string("email/qr_email.html", context=context)
+#     text_content = strip_tags(html_content)
+    
+#     # Configura la mail
+#     email = EmailMultiAlternatives(
+#         subject="Tu código QR para el evento",
+#         body=text_content,
+#         from_email=f'"Organización de eventos" <{settings.EMAIL_HOST_USER}>',
+#         to=[attender.email],
+#     )
+
+#     email.attach_alternative(html_content, "text/html")
+#     email.attach(f"codigo qr {attender.name} {attender.surname}.png", buffer.getvalue(), "image/png")
+    
+#     email.send()
+
+# Send PDF with information and QR code
 def send_qr(attender_id):
     attender = Attender.objects.get(id=attender_id)
+    
+    # Strings
+    SUBJECT = f"Código QR de {attender.name.upper()} {attender.surname.upper()}"
+    FROM_EMAIL = f'"Organización de eventos" <{settings.EMAIL_HOST_USER}>'
+    INFORMATION = "Información del asistente"
+    NAME = f"Nombre: {attender.name.upper()}"
+    SURNAME = f"Apellido: {attender.surname.upper()}"
+    # BROTHERHOOD = attender.brotherhood
+    QR_CODE = f"Código QR:"
 
-    # generate qr
+    # Generate qr code
     code = attender.code
     qr = qrcode.QRCode(
         version=1,
@@ -278,33 +336,46 @@ def send_qr(attender_id):
     qr.add_data(code)
     qr.make(fit=True)
 
-    # Converti il QR Code in un'immagine PNG
-    img = qr.make_image(fill_color="black", back_color="white")
-    buffer = BytesIO()
-    img.save(buffer, format="PNG")
-    buffer.seek(0)
+    qr_img = qr.make_image(fill_color="black", back_color="white")
+    qr_buffer = BytesIO()
+    qr_img.save(qr_buffer, format="PNG")
+    qr_buffer.seek(0)
 
-    # Codifica l'immagine in base64
-    img_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+    # Create PDF
+    pdf_buffer = BytesIO()
+    pdf = canvas.Canvas(pdf_buffer, pagesize=letter)
+    pdf.setFont("Helvetica-Bold", 20)
+    pdf.drawCentredString(300, 750, INFORMATION)
+    pdf.setFont("Helvetica", 18)
+    pdf.drawCentredString(300, 710, NAME)
+    pdf.drawCentredString(300, 690, SURNAME)
+    # pdf.drawCentredString(300, 690, f"Cófradia: {attender.brotherhood}")
+    pdf.drawCentredString(300, 650, QR_CODE)
 
+    # QR code to PDF
+    qr_img_reader = ImageReader(qr_buffer)
+    pdf.drawImage(qr_img_reader, 150, 300, width=300, height=300)
+
+    # Close PDF
+    pdf.showPage()
+    pdf.save()
+    pdf_buffer.seek(0)
+
+    # Send email
     context = {
         "attender": attender,
-        "qr": img_base64,
     }
-
-    # Render del template
     html_content = render_to_string("email/qr_email.html", context=context)
     text_content = strip_tags(html_content)
-    
-    # Configura la mail
+
     email = EmailMultiAlternatives(
-        subject="Tu código QR para el evento",
+        subject=SUBJECT,
         body=text_content,
-        from_email=f'"Organización de eventos" <{settings.EMAIL_HOST_USER}>',
+        from_email=FROM_EMAIL,
         to=[attender.email],
     )
 
     email.attach_alternative(html_content, "text/html")
-    email.attach(f"codigo qr {attender.name} {attender.surname}.png", buffer.getvalue(), "image/png")
-    
+    email.attach(f"{attender.name}_{attender.surname}_QR.pdf", pdf_buffer.getvalue(), "application/pdf")
+
     email.send()

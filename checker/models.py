@@ -34,3 +34,6 @@ class Attendance(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.event.name}"
+    
+class Brotherhood(models.Model):
+    name = models.CharField(max_length=255)
