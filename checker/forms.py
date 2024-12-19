@@ -36,8 +36,9 @@ class AddEventForm(ModelForm):
 class AttenderForm(ModelForm):
     class Meta:
         model = Attender
-        fields = ['name', 'surname']
+        fields = ['name', 'surname', 'brotherhood']
         widgets = {
             'name': forms.TextInput(attrs={"class": "form-control", "placeholder": "Nombre", "required": True, "autocomplete": "off"}),
             'surname': forms.TextInput(attrs={"class": "form-control", "placeholder": "Sobrenombre", "required": True, "autocomplete": "off"}),
+            'brotherhood': forms.Select(attrs={"class": "form-control", "placeholder": "Hermandad", "required": True, "autocomplete": "off"}),
         }
