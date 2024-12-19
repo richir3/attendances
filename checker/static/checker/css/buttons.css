@@ -11,6 +11,18 @@
     font-size: 16px;
 }
 
+.button-send-qr {
+    width: 40vw;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
 .button-action:disabled {
     opacity: 0.3;
 }
@@ -33,5 +45,11 @@
     .button-action-container {
         display: flex;
         align-items: center;
+    }
+
+    .button-send-qr {
+        width: 30vw;
+        margin-left: auto;
+        margin-right: auto;
     }
 }
