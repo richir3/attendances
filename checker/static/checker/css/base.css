@@ -204,6 +204,7 @@ ul ul li, ol ol li {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
+    align-items: center;
 }
 
 

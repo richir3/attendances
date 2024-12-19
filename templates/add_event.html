@@ -13,7 +13,7 @@
         <p>Próximos eventos:</p>
         <ul>
         {% for event in events %}
-            <li>{{ event }}</li>
+            <li>{{event.name}} {{ event }}</li>
         {% endfor %}
         </ul>
     </div>
