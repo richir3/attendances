@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Event, Attender, Attendance
+from .models import *
 
 # Register your models here.
 # use the advanced way to show the models in the admin panel
@@ -14,4 +14,5 @@ class EventAdmin(admin.ModelAdmin):
 admin.site.register(Attendance)
 admin.site.register(Event, EventAdmin)
 admin.site.register(Attender)
+admin.site.register(Brotherhood)
 
