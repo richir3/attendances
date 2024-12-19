@@ -5,7 +5,7 @@ from openpyxl.styles import Font, Alignment
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.utils import ImageReader
-from .models import Attender, Event, Attendance
+from .models import *
 from .forms import AttenderForm, EventForm, AddEventForm
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
@@ -15,6 +15,8 @@ from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from rest_framework import generics, permissions
+from .serializers import *
 
 # Create your views here.
 @login_required
@@ -57,27 +59,27 @@ def post_qr_data(request):
             else:
                 attendance = Attendance(event=event, user=attender)
                 
-                # send an email to the attender to confirm the attendance
-                context = {
-                    "event": event,
-                }
+                # # send an email to the attender to confirm the attendance
+                # context = {
+                #     "event": event,
+                # }
 
-                html_content = render_to_string("email/confirm_attendance.html", context=context)
-                text_content = strip_tags(html_content)
+                # html_content = render_to_string("email/confirm_attendance.html", context=context)
+                # text_content = strip_tags(html_content)
 
-                email = EmailMultiAlternatives(
-                    subject="Asistencia confirmada",
-                    body=text_content,
-                    from_email=f'"Organización de eventos" <{settings.EMAIL_HOST_USER}>',
-                    to=[attender.email],
-                )
+                # email = EmailMultiAlternatives(
+                #     subject="Asistencia confirmada",
+                #     body=text_content,
+                #     from_email=f'"Organización de eventos" <{settings.EMAIL_HOST_USER}>',
+                #     to=[attender.email],
+                # )
 
-                email.attach_alternative(html_content, "text/html")
+                # email.attach_alternative(html_content, "text/html")
 
-                try:
-                    email.send()
-                except Exception as e:
-                    response = JsonResponse({'status': 'error con el correo', 'error': str(e)}, status=500)
+                # try:
+                #     email.send()
+                # except Exception as e:
+                #     response = JsonResponse({'status': 'error con el correo', 'error': str(e)}, status=500)
 
                 attendance.save()
                 response = JsonResponse({'status': 'success', 'message': 'Asistencia guardada'}, status=200)
@@ -115,26 +117,16 @@ def list_attenders(request):
 
 @login_required
 def add_attender(request):
-    def create_code():
-        codes = [attender.code for attender in Attender.objects.all()]
-        code = "".join(random.choices("ABCDEFGHIJKLMNOPQRSTUVWXYZ", k=10))
-        while code in codes:
-            code = "".join(random.choices("ABCDEFGHIJKLMNOPQRSTUVWXYZ", k=10))
-        return code
-
     if request.method == "POST":
         form = AttenderForm(request.POST)
         if form.is_valid():
             name = form.cleaned_data["name"]
             surname = form.cleaned_data["surname"]
             email = form.cleaned_data["email"]
-            code = create_code()
             attender = Attender(
                 name=name, 
                 surname=surname, 
-                email=email, 
-                code=code, 
-                email_verified=False
+                email=email,
             )
             attender.save()
 
@@ -182,7 +174,7 @@ def download_attendances(request):
     df.columns = event_dates
 
     # insert a column in the dataframe with the total attendances, in the second position
-    df.insert(0, "Total", df.apply(lambda x: x.value_counts().get("YES", 0), axis=1))
+    df.insert(0, "Total", df.apply(lambda x: x.value_counts().get(YES, 0), axis=1))
 
     # Creazione di un buffer in memoria
     buffer = BytesIO()
@@ -372,10 +364,60 @@ def send_qr(attender_id):
         subject=SUBJECT,
         body=text_content,
         from_email=FROM_EMAIL,
-        to=[attender.email],
+        to=[attender.brotherhood.email],
     )
 
     email.attach_alternative(html_content, "text/html")
     email.attach(f"{attender.name}_{attender.surname}_QR.pdf", pdf_buffer.getvalue(), "application/pdf")
 
     email.send()
+
+
+# API REST
+class AttenderListCreate(generics.ListCreateAPIView):
+    queryset = Attender.objects.all()
+    serializer_class = AttenderSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+    # how can i execcute a function after the creation of an object?
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        try:
+            send_qr(instance.id)
+        except Exception as e:
+            pass
+
+class AttenderRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Attender.objects.all()
+    serializer_class = AttenderSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+class EventListCreate(generics.ListCreateAPIView):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+class EventRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+class AttendanceListCreate(generics.ListCreateAPIView):
+    queryset = Attendance.objects.all()
+    serializer_class = AttendanceSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+class AttendanceRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Attendance.objects.all()
+    serializer_class = AttendanceSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+class BrotherhoodListCreate(generics.ListCreateAPIView):
+    queryset = Brotherhood.objects.all()
+    serializer_class = BrotherhoodSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+class BrotherhoodRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Brotherhood.objects.all()
+    serializer_class = BrotherhoodSerializer
+    permission_classes = [permissions.IsAdminUser]

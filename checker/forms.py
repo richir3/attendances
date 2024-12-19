@@ -6,22 +6,24 @@ import datetime
 class EventForm(forms.Form):
     try:
         default_event = Event.objects.get(date=datetime.date.today())
-    except Event.DoesNotExist:
+    except:
         default_event = None
-    
-    evento = forms.ModelChoiceField(
-        queryset=Event.objects.filter(date__gte=datetime.date.today()).order_by('date'), 
-        initial=default_event, 
-        required=True,
-        empty_label="Seleccione un evento", 
-        widget=forms.Select(
-            attrs={"class": "form-control form-select", 
-                   "id": "event-form",
-                   "label": "Evento",
-                }
+    try:
+        evento = forms.ModelChoiceField(
+            queryset=Event.objects.filter(date__gte=datetime.date.today()).order_by('date'), 
+            initial=default_event, 
+            required=True,
+            empty_label="Seleccione un evento", 
+            widget=forms.Select(
+                attrs={"class": "form-control form-select", 
+                    "id": "event-form",
+                    "label": "Evento",
+                    }
+                )
             )
-        )
-    
+    except:
+        pass
+
 class AddEventForm(ModelForm):
     class Meta:
         model = Event
@@ -34,19 +36,8 @@ class AddEventForm(ModelForm):
 class AttenderForm(ModelForm):
     class Meta:
         model = Attender
-        fields = ['name', 'surname', 'email']
+        fields = ['name', 'surname']
         widgets = {
             'name': forms.TextInput(attrs={"class": "form-control", "placeholder": "Nombre", "required": True, "autocomplete": "off"}),
             'surname': forms.TextInput(attrs={"class": "form-control", "placeholder": "Sobrenombre", "required": True, "autocomplete": "off"}),
-            'email': forms.EmailInput(attrs={"class": "form-control", "placeholder": "Email", "required": True, "autocomplete": "off"}),
-        }
-
-class AttenderUpdateForm(ModelForm):
-    class Meta:
-        model = Attender
-        fields = ['name', 'surname', 'email']
-        widgets = {
-            'name': forms.TextInput(attrs={"class": "form-control", "placeholder": "Nombre", "required": True, "autocomplete": "off"}),
-            'surname': forms.TextInput(attrs={"class": "form-control", "placeholder": "Sobrenombre", "required": True, "autocomplete": "off"}),
-            'email': forms.EmailInput(attrs={"class": "form-control", "placeholder": "Email", "required": True, "autocomplete": "off"}),
         }
