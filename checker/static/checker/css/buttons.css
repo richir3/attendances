@@ -11,10 +11,6 @@
     font-size: 16px;
 }
 
-.button-action:hover {
-    opacity: 0.8;
-}
-
 .button-action:disabled {
     opacity: 0.3;
 }

@@ -10,7 +10,7 @@
 
 {% block content %}
     <div>
-        <p>Próximos eventos:</p>
+        <h2>Próximos eventos:</h2>
         <ul>
         {% for event in events %}
             <li>{{event.name}} {{ event }}</li>
@@ -19,7 +19,7 @@
     </div>
     
     <div>
-        <p>Crear un nuevo evento:</p>
+        <h2>Crear un nuevo evento:</h2>
         <form method="POST" action="{% url 'add_event' %}">
             {% csrf_token %}
             {{ form.as_p }}

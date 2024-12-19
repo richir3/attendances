@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Base template{% endblock %}</title>
     {% load static %}
+    <link rel="shortcut icon" type="image/png" href="{% static 'checker/images/favicon.png' %}" >
     <link rel="stylesheet" href="{% static 'checker/css/base.css' %}">
     <link rel="stylesheet" href="{% static 'checker/css/form.css' %}">
     <link rel="stylesheet" href="{% static 'checker/css/buttons.css' %}">
@@ -22,14 +23,14 @@
             <!-- Bottoni visibili solo per utenti autenticati -->
             {% if user.is_authenticated %}
                 <div class="navbar-buttons">
-                    <!-- Bottone Logout -->
-                    <button id="logout" class="navbar-button logout-button">
-                        <img class="navbar-image" src="{% static 'checker/images/logout.png' %}" alt="Logout" class="header-button-image">
-                    </button>
-
                     <!-- Bottone Home -->
                     <button id="home" class="navbar-button">
                         <img class="navbar-image" src="{% static 'checker/images/home.png' %}" alt="Home" class="header-button-image">
+                    </button>
+
+                    <!-- Bottone Logout -->
+                    <button id="logout" class="navbar-button logout-button">
+                        <img class="navbar-image" src="{% static 'checker/images/logout.png' %}" alt="Logout" class="header-button-image">
                     </button>
                 </div>
             {% endif %}

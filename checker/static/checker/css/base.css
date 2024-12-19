@@ -87,6 +87,8 @@ body {
     margin: 0 auto;
     max-width: 800px; /* Limita la larghezza del contenuto */
     text-align: center; /* Allinea il testo al centro */
+    /* prendi tutta la pagina in altezza */
+    height: 100vh;
 }
 
 /* Stile di base per le tabelle */
@@ -139,7 +141,7 @@ table td {
 
 /* Stile di base per tutte le liste */
 ul, ol {
-    margin: 20px; /* Spaziatura esterna */
+    /* margin: 20px; Spaziatura esterna */
     padding: 0; /* Rimuove il padding di default */
     list-style-position: inside; /* Posiziona i marker dentro la lista */
     font-size: 1rem;
@@ -149,7 +151,7 @@ ul, ol {
 
 /* Stile per liste non ordinate (ul) */
 ul {
-    list-style-type: disc; /* Marker standard */
+    list-style-type: none; /* Marker standard */
 }
 
 /* Stile per liste ordinate (ol) */

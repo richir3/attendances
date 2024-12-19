@@ -1,19 +1,17 @@
 import json, random, openpyxl, datetime, base64, qrcode
-from openpyxl.styles import Font, Alignment
 import pandas as pd
+from io import BytesIO
+from openpyxl.styles import Font, Alignment
+from .models import Attender, Event, Attendance
+from .forms import AttenderForm, EventForm, AddEventForm
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
-from .models import Attender, Event, Attendance
-from .forms import AttenderForm, EventForm, AddEventForm
-from io import BytesIO
-from django.core.mail import send_mail, EmailMessage, EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
-from django.core.files.base import ContentFile
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-
 
 # Create your views here.
 @login_required
@@ -48,15 +46,12 @@ def qr_reader_view(request):
 def post_qr_data(request):
     if request.method == "POST":
         data = json.loads(request.body)
-        print(data)
-        # return JsonResponse({"message": "Data saved!"}, status=200)
-
         try:
             attender = Attender.objects.get(code=data['content'])  
             event = Event.objects.get(id=data['date'])
             # come faccio a sapere se Attendance.objects.get(event=event, user=attender) esiste nel mio db?
             if Attendance.objects.filter(event=event, user=attender).exists():
-                response = JsonResponse({'status': 'error', 'error': 'Attender already attended to the event'}, status=400)
+                response = JsonResponse({'status': 'error', 'error': 'El asistente ya asistió al evento.'}, status=400)
             else:
                 attendance = Attendance(event=event, user=attender)
                 
@@ -84,13 +79,13 @@ def post_qr_data(request):
                     response = JsonResponse({'status': 'error con el correo', 'error': str(e)}, status=500)
 
                 attendance.save()
-                response = JsonResponse({'status': 'success', 'message': 'Attendance saved'}, status=200)
+                response = JsonResponse({'status': 'success', 'message': 'Asistencia guardada'}, status=200)
         except KeyError as e:
             response = JsonResponse({'status': 'error', 'error': 'Invalid data'}, status=400)
         except Attender.DoesNotExist as e:
-            response = JsonResponse({'status': 'error', 'error': 'Attender not found'}, status=404)
+            response = JsonResponse({'status': 'error', 'error': 'Asistente no encontrado'}, status=404)
         except Event.DoesNotExist as e:
-            response = JsonResponse({'status': 'error', 'error': 'Event not found'}, status=404)
+            response = JsonResponse({'status': 'error', 'error': 'Evento no encontrado'}, status=404)
         except json.JSONDecodeError as e:
             response = JsonResponse({'status': 'error', 'error': 'Invalid JSON'}, status=400)
         except Exception as e:

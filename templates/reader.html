@@ -17,11 +17,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
 <script>
     const codes = {{ codes|safe }};
-    const reader = new Html5Qrcode("reader");
+    var reader;
     let qrContent = null; // Per memorizzare il contenuto del QR
 
     // Avvia il lettore QR
     function startQrScanner() {
+        reader = new Html5Qrcode("reader");
         reader.start(
             { facingMode: "environment" }, // Usa la fotocamera posteriore
             { fps: 10, qrbox: { width: 250, height: 250 } },
@@ -97,7 +98,7 @@
 
     // leggi il codice e ritorna il nome
     function getUserName(qrContent) {
-        return codes[qrContent] || "Unknown";
+        return codes[qrContent] || "usuario desconocido";
     }
     
 </script>
