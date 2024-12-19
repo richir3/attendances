@@ -120,16 +120,8 @@ def add_attender(request):
     if request.method == "POST":
         form = AttenderForm(request.POST)
         if form.is_valid():
-            name = form.cleaned_data["name"]
-            surname = form.cleaned_data["surname"]
-            email = form.cleaned_data["email"]
-            attender = Attender(
-                name=name, 
-                surname=surname, 
-                email=email,
-            )
-            attender.save()
-
+            form.save()
+            attender = Attender.objects.get(name=form.cleaned_data['name'], surname=form.cleaned_data['surname'])
             try:
                 send_qr(attender.id)
             except Exception as e:

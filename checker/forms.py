@@ -40,5 +40,5 @@ class AttenderForm(ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={"class": "form-control", "placeholder": "Nombre", "required": True, "autocomplete": "off"}),
             'surname': forms.TextInput(attrs={"class": "form-control", "placeholder": "Sobrenombre", "required": True, "autocomplete": "off"}),
-            'brotherhood': forms.Select(attrs={"class": "form-control", "placeholder": "Hermandad", "required": True, "autocomplete": "off"}),
+            'brotherhood': forms.Select(attrs={"class": "form-control form-select", "placeholder": "Hermandad", "required": True, "autocomplete": "off"}),
         }
