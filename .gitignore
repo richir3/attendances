@@ -1,6 +1,7 @@
 checkenv/
 presence/__pycache__/
 checker/__pycache__/
+checker/migrations/__pycache__
 cert.crt
 cert.key
 db.sqlite3
