@@ -5,8 +5,8 @@
 
 {% block content %}
     <div id="buttons-container">
-        <button id="start-scan">Start scanning</button>
-        <button id="stop-scan" disabled>Stop scanning</button>
+        <button class="button-action button-green" id="start-scan">Comenzar a escanear</button>
+        <button class="button-action button-red" id="stop-scan" disabled>Dejar de escanear</button>
     </div>
     {% csrf_token %}
     {{ form.as_p }}
@@ -17,7 +17,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
 <script>
     const codes = {{ codes|safe }};
-    console.log(codes);
     const reader = new Html5Qrcode("reader");
     let qrContent = null; // Per memorizzare il contenuto del QR
 
@@ -37,7 +36,7 @@
     function confirmQrContent(content) {
         reader.stop(); // Ferma il lettore QR temporaneamente
 
-        const userConfirmed = confirm(`Scanned content: ${getUserName(content)}. Do you confirm?`);
+        const userConfirmed = confirm(`Usuario escaneado: ${getUserName(content)}. Confirmas?`);
         if (userConfirmed) {
             sendQrContent(content); // Invia i dati
         } else {
@@ -68,13 +67,12 @@
             if (response.ok) {
                 alert(data.message); // Mostra il messaggio in un alert
             } else {
-                alert(`Error: ${data.error || "Unknown error"}`);
+                alert(`Error: ${data.error || "Error desconocido"}`);
             }
     
             resetScanner(); // Ripristina lo scanner dopo l'invio
         } catch (error) {
-            console.error("Errore durante l'invio:", error);
-            alert("Errore durante l'invio. Per favore riprova.");
+            alert("Error al enviar. Por favor inténtalo de nuevo.");
             resetScanner(); // Ripristina lo scanner in caso di errore
         }
     }    

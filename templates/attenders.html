@@ -9,27 +9,22 @@
 {% endblock %}
 
 {% block content %}
-    <div>
-        <button id="add-attender">Add attender</button>
-        <button id="download">Download attendances</button>
+    <div class="button-action-container">
+        <button class="button-action button-green" id="add-attender">Agregar asistente</button>
+        <button class="button-action button-green" id="download">Descargar excel</button>
     </div>
     <table>
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Surname</th>
-                <th>Email</th>
+                <th>Usuario</th>
                 <th>Attendances</th>
             </tr>
         </thead>
         <tbody>
             {% for attender in attenders %}
-                <tr>
-                    <td>{{ attender.attender.name }}</td>
-                    <td>{{ attender.attender.surname }}</td>
-                    <td>{{ attender.attender.email }}</td>
+                <tr id="redirect-attender-{{ attender.attender.id }}">
+                    <td>{{ attender.attender.name }} {{ attender.attender.surname }}</td>
                     <td>{{ attender.attendances }}</td>
-                    <td><button id="redirect-attender-{{ attender.attender.id }}">View</button></td>
                 </tr>
             {% endfor %}
         </tbody>

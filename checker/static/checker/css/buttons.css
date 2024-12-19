@@ -1,0 +1,41 @@
+/* BEGIN: Buttons */
+.button-action {
+    width: 40vw;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.button-action:hover {
+    opacity: 0.8;
+}
+
+.button-action:disabled {
+    opacity: 0.3;
+}
+
+.button-green {
+    background-color: #4CAF50;
+}
+
+.button-red {
+    background-color: #d9534f;
+}
+
+@media only screen and (max-width: 600px) {
+    .button-action {
+        width: 45vw;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .button-action-container {
+        display: flex;
+        align-items: center;
+    }
+}

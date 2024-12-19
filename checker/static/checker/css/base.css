@@ -4,7 +4,6 @@
     color: white;
     padding: 10px;
     z-index: 1000; 
-    width: 100%;
     top: 0;
 }
 
@@ -14,6 +13,10 @@
     padding: 10px 20px;
     display: flex;
     
+}
+
+.header-user {
+    padding: 10px;
 }
 
 .navbar-brand {
@@ -195,6 +198,12 @@ ul ul li, ol ol li {
     background-color: #ffffff; /* Sfondo bianco */
     border: 1px dashed #ddd; /* Bordo tratteggiato */
     color: #555; /* Colore testo più chiaro */
+}
+
+.user-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
 }
 
 

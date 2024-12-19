@@ -1,16 +1,16 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    Create event
+    Crear evento
 {% endblock %}
 
 {% block header %}
-    Create event
+    Crear evento
 {% endblock %}
 
 {% block content %}
     <div>
-        <p>Next events:</p>
+        <p>Próximos eventos:</p>
         <ul>
         {% for event in events %}
             <li>{{ event }}</li>
@@ -19,11 +19,11 @@
     </div>
     
     <div>
-        <p>Create a new event:</p>
+        <p>Crear un nuevo evento:</p>
         <form method="POST" action="{% url 'add_event' %}">
             {% csrf_token %}
             {{ form.as_p }}
-            <input type="submit" value="Create Event">
+            <input type="submit" value="Crear evento">
         </form>
     </div>
 {% endblock %}

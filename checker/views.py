@@ -28,9 +28,9 @@ def home(request):
             return f"{self.name.lower().replace(' ', '-')}"
 
     functionalities = [
-        Functionality("QR Reader", reverse("qr_reader_view")),
-        Functionality("List Attenders", reverse("list_attenders")),
-        Functionality("Add Event", reverse("add_event")),
+        Functionality("Lector QR", reverse("qr_reader_view")),
+        Functionality("Gestionar asistentes", reverse("list_attenders")),
+        Functionality("Gestionar eventos", reverse("add_event")),
     ]
     
     return render(request, "home.html", {"functionalities": functionalities})
@@ -266,7 +266,6 @@ def send_qr_code_mail(request, attender_id):
         except Exception as e:
             return JsonResponse({"status": "error", "message": str(e)}, status=500)
         return JsonResponse({"status": "success", "message": "Correo enviado"}, status=200)
-        
     else:
         return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
 

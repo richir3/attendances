@@ -9,40 +9,52 @@
 {% endblock %}
 
 {% block content %}
-    <h2>Details</h2>
-    <p>Name: {{ attender.name }}</p>
-    <p>Surname: {{ attender.surname }}</p>
-    <p>Email: {{ attender.email }}</p>
-    <h2>Attendances</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Attendance</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for event in events %}
+    <div>
+        <h2>Información del usuario</h2>
+        <div class="user-info">
+            <span>
+                <p>Usuario: {{ attender.name }} {{ attender.surname }}</p>
+                <p>Email: {{ attender.email }}</p>
+            </span>
+            <span>
+                <button class="button-action button-green" id="send-qr">Enviar código QR</button>
+            </span>
+        </div>
+    </div>
+    <div>
+        <h2>Asistencias</h2>
+        <table>
+            <thead>
                 <tr>
-                    <td>{{ event }}</td>
-                    {% if event in attendances %}
-                        <td>Yes</td>
-                    {% else %}
-                        <td>No</td>
-                    {% endif %}
+                    <th>Fecha</th>
+                    <th>Asistencia</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <h2>Actions</h2>
-    <button id="send-qr">Send QR code</button>
+            </thead>
+            <tbody>
+                {% for event in events %}
+                    <tr>
+                        <td>{{ event }}</td>
+                        {% if event in attendances %}
+                            <td>SI</td>
+                        {% else %}
+                            <td>NO</td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
 
 {% block scripts %}
     <script>
         document.getElementById('send-qr').addEventListener('click', function() {
-            sendMail();
+            const user = "{{ attender.name }} {{ attender.surname }}";
+            const sendConfirmed = confirm('¿Estás seguro de que quieres enviar el código QR a ' + user + '?');
+            
+            if (sendConfirmed) {
+                sendMail();
+            }
         });
 
         async function sendMail(){
