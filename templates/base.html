@@ -37,7 +37,12 @@
         </div>
 
         {% if user.is_authenticated %}
-        <div class="header-user">Hola {{ user.name }}!</div>
+        {% if user.first_name %}
+        <div class="header-user">Hola {{ user.first_name }}!</div>
+        {% else %}
+        <div class="header-user">Hola {{ user.username }}!</div>
+        {% endif %}
+        
         {% endif %}
     </header>
     
