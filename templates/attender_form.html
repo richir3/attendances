@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Modifica Attender</h2>
+<form id="modify" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+</form>
+
+<div class="form-style">
+    <button id="button-submit"class="button-submit">Aceptar</button>
+    <button onclick="window.location.href='{% url 'list_attenders' %}'" class="button-reset">Cancelar</button>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById("button-submit").addEventListener("click", function () {
+        document.getElementById("modify").submit(); // Invio form manuale
+    });
+</script>
+{% endblock %}

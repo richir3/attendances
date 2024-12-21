@@ -8,10 +8,15 @@ urlpatterns = [
     path('attenders/', views.list_attenders, name='list_attenders'),
     path('add-attender/', views.add_attender, name='add_attender'),
     path('attenders/<int:pk>/', views.attender_overview, name='attender_overview'),
+    path('attenders/<int:pk>/edit/', views.AttenderUpdateView.as_view(), name='attender_edit'),
+    path('attenders/<int:pk>/delete/', views.AttenderDeleteView.as_view(), name='attender_delete'),
     path('download-attendances/', views.download_attendances, name='download_attendances'),
     path('add-event/', views.add_event, name='add_event'),
     path('mail-code/<int:attender_id>/', views.send_qr_code_mail, name='mail_code'),
+    path('mail-code-specific/<int:attender_id>/', views.send_qr_code_mail, name='mail_code_specific'),
+
     
+
     # rest api
     path('attenders-api/', views.AttenderListCreate.as_view(), name='attender-list'),
     path('attenders-api/<int:pk>/', views.AttenderRetrieveUpdateDestroy.as_view(), name='attender-detail'),

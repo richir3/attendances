@@ -6,17 +6,19 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.utils import ImageReader
 from .models import *
-from .forms import AttenderForm, EventForm, AddEventForm
+from .forms import AttenderForm, EventForm, AddEventForm, EmailForm
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from rest_framework import generics, permissions
 from .serializers import *
+from django.views.generic.edit import UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 # Create your views here.
 @login_required
@@ -108,7 +110,7 @@ def list_attenders(request):
         def __repr__(self):
             return f"{self.attender.name} {self.attender.surname} - {self.attendances}"
     
-    attenders = [AttenderShow(a) for a in Attender.objects.all()]
+    attenders = [AttenderShow(a) for a in Attender.objects.all().order_by("name")]
 
     context = {
         "attenders": attenders,
@@ -142,6 +144,19 @@ def attender_overview(request, pk):
     }
 
     return render(request, "attender.html", context=context)
+
+# modify or delete attender
+class AttenderUpdateView(LoginRequiredMixin, UpdateView):
+    model = Attender
+    form_class = AttenderForm
+    template_name = 'attender_form.html'
+    success_url = reverse_lazy('list_attenders')  # Cambia con il nome della tua lista di attenders
+
+# Elimina un Attender
+class AttenderDeleteView(LoginRequiredMixin, DeleteView):
+    model = Attender
+    template_name = 'attender_confirm_delete.html'
+    success_url = reverse_lazy('list_attenders')
 
 @login_required
 def download_attendances(request):
@@ -298,13 +313,31 @@ def send_qr_code_mail(request, attender_id):
     
 #     email.send()
 
-# Send PDF with information and QR code
-def send_qr(attender_id):
+def send_qr_code_mail(request, attender_id):
     attender = Attender.objects.get(id=attender_id)
-    
+    if request.method == "POST":
+        form = EmailForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data["email"]
+            send_qr(attender_id, email)
+            return redirect("list_attenders")
+    else:
+        form = EmailForm()
+        context = {
+            "attender": attender,
+            "form": form,
+        }
+        return render(request, "mail_qr_to.html", context=context)
+
+
+# Send PDF with information and QR code
+def send_qr(attender_id, emailaddress = None):
+    attender = Attender.objects.get(id=attender_id)
+    if emailaddress == None:
+        emailaddress = attender.brotherhood.email
     # Strings
     SUBJECT = f"Código QR de {attender.name.upper()} {attender.surname.upper()}"
-    FROM_EMAIL = f'"Organización de eventos" <{settings.EMAIL_HOST_USER}>'
+    FROM_EMAIL = f'"Organización Pregón 2025" <{settings.EMAIL_HOST_USER}>'
     INFORMATION = "Información del asistente"
     NAME = f"Nombre: {attender.name.upper()}"
     SURNAME = f"Apellido: {attender.surname.upper()}"
@@ -351,6 +384,10 @@ def send_qr(attender_id):
     context = {
         "attender": attender,
     }
+
+    if emailaddress is not None:
+        context["name"] = attender.name
+
     html_content = render_to_string("email/qr_email.html", context=context)
     text_content = strip_tags(html_content)
 
@@ -358,14 +395,13 @@ def send_qr(attender_id):
         subject=SUBJECT,
         body=text_content,
         from_email=FROM_EMAIL,
-        to=[attender.brotherhood.email],
+        to=[emailaddress],
     )
 
     email.attach_alternative(html_content, "text/html")
     email.attach(f"{attender.name}_{attender.surname}_QR.pdf", pdf_buffer.getvalue(), "application/pdf")
 
     email.send()
-
 
 # API REST
 class AttenderListCreate(generics.ListCreateAPIView):

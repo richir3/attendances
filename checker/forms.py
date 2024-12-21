@@ -48,3 +48,11 @@ class AttenderForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['brotherhood'].empty_label = self.COFRADIA
+
+
+class EmailForm(forms.Form):
+    email = forms.EmailField(
+        widget=forms.EmailInput(
+            attrs={"class": "form-control", "placeholder": "Email", "required": True, "autocomplete": "off"}
+        )
+    )

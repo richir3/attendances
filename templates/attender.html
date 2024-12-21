@@ -17,9 +17,6 @@
                 <p>Cofradia: {{ attender.brotherhood.name }}</p>
                 <p>Email: {{ attender.brotherhood.email }}</p>
             </span>
-            <span>
-                <button class="button-send-qr button-green" id="send-qr">Enviar código QR</button>
-            </span>
         </div>
     </div>
     <div>
@@ -44,6 +41,13 @@
                 {% endfor %}
             </tbody>
         </table>
+    </div>
+    <div>
+        <h2>Acciones</h2>
+        <button class="button-action button-green" id="send-qr">Enviar código QR a cofradía</button>
+        <button class="button-action button-green" onclick="window.location.href='{% url 'mail_code_specific' attender.id %}'"id="send-qr">Enviar código QR a otro correo</button>
+        <button class="button-action button-green" onclick="window.location.href='{% url 'attender_edit' attender.id %}'" class="button-edit">Editar</button>
+        <button class="button-action button-red" onclick="window.location.href='{% url 'attender_delete' attender.id %}'" class="button-delete">Eliminar</button>
     </div>
 {% endblock %}
 

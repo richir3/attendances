@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Estás seguro de que quieres eliminar {{ attender.name }} {{ attender.surname }}?</h2>
+<form id="delete" method="post" style="display:none">
+    {% csrf_token %}
+</form>
+
+<div class="form-style">
+    <p>Esta acción no se puede deshacer.</p>
+    <button id="button-submit"class="button-submit">Sì, elimina</button>
+    <button onclick="window.location.href='{% url 'list_attenders' %}'" class="button-reset">Annulla</button>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById("button-submit").addEventListener("click", function () {
+        document.getElementById("delete").submit(); // Invio form manuale
+    });
+</script>
+{% endblock %}
