@@ -168,6 +168,8 @@ def download_attendances(request):
     # insert a column in the dataframe with the total attendances, in the second position
     df.insert(0, "Total", df.apply(lambda x: x.value_counts().get(YES, 0), axis=1))
 
+    df.insert(0, "Cofradia", df.apply(lambda x: x.name.brotherhood.name, axis=1))
+
     # Creazione di un buffer in memoria
     buffer = BytesIO()
 
