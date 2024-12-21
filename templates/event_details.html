@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Detalles del evento
+{% endblock %}
+
+{% block header %}
+    Detalles del evento
+{% endblock %}
+
+{% block content %}
+    <h2>{{ event.name }}</h2>
+    <p>Fecha: {{ event }}</p>
+    <button class="button-action button-red" onclick="window.location.href='{% url 'event_delete' event.id %}'" class="button-delete">Eliminar</button>
+{% endblock %}

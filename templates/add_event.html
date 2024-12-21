@@ -8,16 +8,7 @@
     Crear evento
 {% endblock %}
 
-{% block content %}
-    <div>
-        <h2>Próximos eventos:</h2>
-        <ul>
-        {% for event in events %}
-            <li>{{event.name}} ({{ event }})</li>
-        {% endfor %}
-        </ul>
-    </div>
-    
+{% block content %}    
     <div>
         <h2>Crear un nuevo evento:</h2>
         <form method="POST" action="{% url 'add_event' %}">

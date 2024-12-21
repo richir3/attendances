@@ -12,8 +12,12 @@ urlpatterns = [
     path('attenders/<int:pk>/delete/', views.AttenderDeleteView.as_view(), name='attender_delete'),
     path('download-attendances/', views.download_attendances, name='download_attendances'),
     path('add-event/', views.add_event, name='add_event'),
+    path('events/', views.list_events, name='list_events'),
+    path('events/<int:pk>/', views.EventDetailView.as_view(), name='event_details'),
+    path('events/<int:pk>/delete/', views.EventDeleteView.as_view(), name='event_delete'),
     path('mail-code/<int:attender_id>/', views.send_qr_code_mail, name='mail_code'),
     path('mail-code-specific/<int:attender_id>/', views.send_qr_code_mail, name='mail_code_specific'),
+
 
     
 

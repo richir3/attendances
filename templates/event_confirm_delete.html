@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 
 {% block title %}
-Eliminar Attender
+Eliminar Evento
 {% endblock %}
 
 {% block header %}
-Eliminar Attender
+Eliminar Evento
 {% endblock %}
 
 {% block content %}
-<h2>Estás seguro de que quieres eliminar {{ attender.name }} {{ attender.surname }}?</h2>
+<h2>Estás seguro de que quieres eliminar {{event.name}} de {{event}}?</h2>
 <form id="delete" method="post" style="display:none">
     {% csrf_token %}
 </form>

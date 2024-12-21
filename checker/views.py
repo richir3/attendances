@@ -19,6 +19,8 @@ from rest_framework import generics, permissions
 from .serializers import *
 from django.views.generic.edit import UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import DetailView
+from django.views.generic import ListView
 
 # Create your views here.
 @login_required
@@ -34,7 +36,7 @@ def home(request):
     functionalities = [
         Functionality("Lector QR", reverse("qr_reader_view")),
         Functionality("Gestionar asistentes", reverse("list_attenders")),
-        Functionality("Gestionar eventos", reverse("add_event")),
+        Functionality("Gestionar eventos", reverse("list_events")),
     ]
 
     return render(request, "home.html", {"functionalities": functionalities})
@@ -145,18 +147,35 @@ def attender_overview(request, pk):
 
     return render(request, "attender.html", context=context)
 
-# modify or delete attender
 class AttenderUpdateView(LoginRequiredMixin, UpdateView):
     model = Attender
     form_class = AttenderForm
     template_name = 'attender_form.html'
-    success_url = reverse_lazy('list_attenders')  # Cambia con il nome della tua lista di attenders
+    success_url = reverse_lazy('list_attenders')
 
-# Elimina un Attender
 class AttenderDeleteView(LoginRequiredMixin, DeleteView):
     model = Attender
     template_name = 'attender_confirm_delete.html'
     success_url = reverse_lazy('list_attenders')
+
+@login_required
+def list_events(request):
+    future_events = Event.objects.filter(date__gte=datetime.date.today()).order_by("date")
+    past_events = Event.objects.filter(date__lt=datetime.date.today()).order_by("date")
+    context = {
+        "future_events": future_events,
+        "past_events": past_events,
+    }
+    return render(request, "events.html", context=context)
+
+class EventDetailView(LoginRequiredMixin, DetailView):
+    model = Event
+    template_name = 'event_details.html'
+
+class EventDeleteView(LoginRequiredMixin, DeleteView):
+    model = Event
+    template_name = 'event_confirm_delete.html'
+    success_url = reverse_lazy('list_events')
 
 @login_required
 def download_attendances(request):

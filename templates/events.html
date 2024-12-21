@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Eventos
+{% endblock %}
+
+{% block header %}
+    Eventos
+{% endblock %}
+
+{% block content %}
+<button class="button-action button-green" onclick="window.location.href='{% url 'add_event' %}'">Crear evento</button>
+<div>
+    <h2>Próximos eventos:</h2>
+    <ul>
+    {% for event in future_events %}
+        <li id="evento-{{event.id}}">{{event.name}} ({{ event }})</li>
+    {% endfor %}
+    </ul>
+</div>
+<div>
+    <h2>Eventos anteriores:</h2>
+    <ul>
+    {% for event in past_events %}
+        <li id="evento-{{event.id}}">{{event.name}} ({{ event }})</li>
+    {% endfor %}
+    </ul>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    {% for event in past_events%}
+        document.getElementById('evento-{{event.id}}').addEventListener('click', function() {
+            window.location.href = "{% url 'event_details' event.id %}";
+        });
+    {% endfor %}
+    {% for event in future_events%}
+        document.getElementById('evento-{{event.id}}').addEventListener('click', function() {
+            window.location.href = "{% url 'event_details' event.id %}";
+        });
+    {% endfor %}
+</script>
+{% endblock %}
+
