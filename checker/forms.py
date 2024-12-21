@@ -34,11 +34,17 @@ class AddEventForm(ModelForm):
         }
 
 class AttenderForm(ModelForm):
+    COFRADIA = 'Selecciona una cofradía'
+
     class Meta:
         model = Attender
         fields = ['name', 'surname', 'brotherhood']
         widgets = {
             'name': forms.TextInput(attrs={"class": "form-control", "placeholder": "Nombre", "required": True, "autocomplete": "off"}),
             'surname': forms.TextInput(attrs={"class": "form-control", "placeholder": "Sobrenombre", "required": True, "autocomplete": "off"}),
-            'brotherhood': forms.Select(attrs={"class": "form-control form-select", "placeholder": "Hermandad", "required": True, "autocomplete": "off"}),
+            'brotherhood': forms.Select(attrs={"class": "form-control form-select", "empty_label": "Hermandad", "required": True, "autocomplete": "off"}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['brotherhood'].empty_label = self.COFRADIA

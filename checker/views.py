@@ -333,7 +333,7 @@ def send_qr(attender_id):
     pdf.setFont("Helvetica", 18)
     pdf.drawCentredString(300, 710, NAME)
     pdf.drawCentredString(300, 690, SURNAME)
-    pdf.drawCentredString(300, 690, BROTHERHOOD)
+    pdf.drawCentredString(300, 670, BROTHERHOOD)
     pdf.drawCentredString(300, 650, QR_CODE)
 
     # QR code to PDF

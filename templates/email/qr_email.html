@@ -23,13 +23,10 @@
 </head>
 <body>
     <div class="container">
-        <h1>Hola {{ attender.name }}</h1>
+        <h1>Hola {{ attender.brotherhood.name }}</h1>
         <p></p>
-        <p>Aquí tienes tu código qr para registrar tu asistencia a eventos:</p>
-        <div class="qr-code">
-            <img src="data:image/png;base64,{{ qr }}" alt="Codigo QR">
-        </div>
-        <p>Si no lee el código anterior directamente, encontrará la imagen adjunta a este correo electrónico.</p>
+        <p>Aquí tienes el código qr para registrar la asistencia de {{ attender.name }} a los ensayos del pregón 2025:</p>
+        <p></p>
     </div>
 </body>
 </html>
