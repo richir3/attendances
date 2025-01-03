@@ -5,8 +5,7 @@ import datetime
 
 class EventForm(forms.Form):
     evento = forms.ModelChoiceField(
-            queryset=Event.objects.all().order_by('date'), 
-            initial=Event.objects.get(date=datetime.date.today()), 
+            queryset=Event.objects.all().order_by('date'),
             required=True,
             empty_label="Seleccione un evento", 
             widget=forms.Select(
@@ -16,6 +15,12 @@ class EventForm(forms.Form):
                     }
                 )
             )
+    
+    def __init__(self, *args, **kwargs):
+        super(EventForm, self).__init__(*args, **kwargs)
+        self.fields['evento'].queryset = Event.objects.all().order_by('date')
+        self.fields['evento'].empty_label = "Seleccione un evento"
+        self.fields['evento'].initial = Event.objects.get(date=datetime.date.today()) if Event.objects.filter(date=datetime.date.today()).exists() else None
 
 class AddEventForm(ModelForm):
     class Meta:
