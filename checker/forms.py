@@ -4,14 +4,9 @@ from .models import Attender, Event
 import datetime
 
 class EventForm(forms.Form):
-    try:
-        default_event = Event.objects.get(date=datetime.date.today())
-    except:
-        default_event = None
-    try:
-        evento = forms.ModelChoiceField(
-            queryset=Event.objects.filter(date__gte=datetime.date.today()).order_by('date'), 
-            initial=default_event, 
+    evento = forms.ModelChoiceField(
+            queryset=Event.objects.all().order_by('date'), 
+            initial=Event.objects.get(date=datetime.date.today()), 
             required=True,
             empty_label="Seleccione un evento", 
             widget=forms.Select(
@@ -21,8 +16,6 @@ class EventForm(forms.Form):
                     }
                 )
             )
-    except:
-        pass
 
 class AddEventForm(ModelForm):
     class Meta:
