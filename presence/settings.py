@@ -144,5 +144,9 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
-EMAIL_HOST_USER = 'riccardotest112@gmail.com'
-EMAIL_HOST_PASSWORD = 'lqit rnjt uizr fqkp'
+email_credential_file = os.path.join(BASE_DIR, '../email_credentials.txt')
+with open(email_credential_file, 'r') as f:
+    EMAIL_HOST_USER = f.readline().strip()
+    EMAIL_HOST_PASSWORD = f.readline().strip()
+    if (line := f.readline().strip()):
+        BCC_EMAIL = line

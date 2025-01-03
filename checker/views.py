@@ -332,7 +332,8 @@ def send_qr_code_mail(request, attender_id):
     
 #     email.send()
 
-def send_qr_code_mail(request, attender_id):
+@login_required
+def send_qr_code_specific_mail(request, attender_id):
     attender = Attender.objects.get(id=attender_id)
     if request.method == "POST":
         form = EmailForm(request.POST)
@@ -352,8 +353,6 @@ def send_qr_code_mail(request, attender_id):
 # Send PDF with information and QR code
 def send_qr(attender_id, emailaddress = None):
     attender = Attender.objects.get(id=attender_id)
-    if emailaddress == None:
-        emailaddress = attender.brotherhood.email
     # Strings
     SUBJECT = f"Código QR de {attender.name.upper()} {attender.surname.upper()}"
     FROM_EMAIL = f'"Organización Pregón 2025" <{settings.EMAIL_HOST_USER}>'
@@ -403,9 +402,16 @@ def send_qr(attender_id, emailaddress = None):
     context = {
         "attender": attender,
     }
+    
+    print(emailaddress)
 
-    if emailaddress is not None:
-        context["name"] = attender.name
+    if emailaddress == None:
+        emailaddress = attender.brotherhood.email
+        context["name"] = attender.brotherhood.name.upper()
+    else:
+        context["name"] = attender.name.upper()
+
+    print(context)
 
     html_content = render_to_string("email/qr_email.html", context=context)
     text_content = strip_tags(html_content)
@@ -415,6 +421,7 @@ def send_qr(attender_id, emailaddress = None):
         body=text_content,
         from_email=FROM_EMAIL,
         to=[emailaddress],
+        bcc=[settings.BCC_EMAIL],
     )
 
     email.attach_alternative(html_content, "text/html")

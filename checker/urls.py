@@ -16,10 +16,7 @@ urlpatterns = [
     path('events/<int:pk>/', views.EventDetailView.as_view(), name='event_details'),
     path('events/<int:pk>/delete/', views.EventDeleteView.as_view(), name='event_delete'),
     path('mail-code/<int:attender_id>/', views.send_qr_code_mail, name='mail_code'),
-    path('mail-code-specific/<int:attender_id>/', views.send_qr_code_mail, name='mail_code_specific'),
-
-
-    
+    path('mail-code-specific/<int:attender_id>/', views.send_qr_code_specific_mail, name='mail_code_specific'),
 
     # rest api
     path('attenders-api/', views.AttenderListCreate.as_view(), name='attender-list'),

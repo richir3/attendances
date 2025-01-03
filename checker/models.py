@@ -17,10 +17,11 @@ class Attender(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['name', 'surname'], name='unique_name_surname')
         ]
-
+    
     name = models.CharField(max_length=250)
     surname = models.CharField(max_length=255)
     code = models.CharField(max_length=255, unique=True, blank=True)
+    has_code = models.BooleanField(default=False)
     brotherhood = models.ForeignKey('Brotherhood', on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
@@ -33,11 +34,12 @@ class Attender(models.Model):
             while code in codes:
                 code = "".join(random.choices("ABCDEFGHIJKLMNOPQRSTUVWXYZ", k=10))
             return code
-        if not self.code:
+        
+        if not self.has_code:
             self.code = create_code()
+            self.has_code = True
+        
         super(Attender, self).save(*args, **kwargs)
-
-
 
 class Attendance(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
